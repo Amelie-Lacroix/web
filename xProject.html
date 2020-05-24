@@ -1,0 +1,203 @@
+<!DocType HTML>
+<html>
+  <head>
+    <title>xProject - xTabControl</title>
+    <style type="text/css">
+    body {
+      background-color: #121212;
+    }
+    .th-ico, .td-ico {
+      height: 40px;
+      width: 40px;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    table tbody tr:hover td {
+      background-color: #EAEAEA;
+    }
+    table thead tr th, table tbody tr td {
+      border: 2px solid #A1A1A1;
+      color: #121212;
+      padding: 8px;
+    }
+    table thead tr th {
+      background-color: #CDCDCD;
+    }
+    table tbody tr td {
+      background-color: #DBDBDB;
+    }
+    .xTabControl {
+      display: table !important;
+    }
+    .xTabControl .xTabButton {
+      border-bottom: none !important;
+      cursor: default !important;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    .xTabControl .xTabButton[ data-active ] {
+      background-color: #DBDBDB !important;
+      color: #030303 !important;
+    }
+    .xTabControl .xTabContainer {
+      background-color: #323232;
+      border: 2px solid #A1A1A1 !important;
+      color: #C4C4C4;
+      padding: 8px !important;
+    }
+    .xTabControl .xTabWindow:not( [ data-active ] ) {
+      display: none !important;
+    }
+    </style>
+    <script type="text/javascript">
+    var makeElem = function( tagName, jsonProperties, jsonCSS ) {
+      var element = document.createElement( tagName );
+      if( jsonProperties ) Object.assign( element, jsonProperties );
+      if( jsonCSS ) Object.assign( element.style, jsonCSS );
+      return( element );
+    };
+    var pushElem = function( tagName, jsonProperties, jsonCSS ) {
+      var element = makeElem( tagName, jsonProperties, jsonCSS );
+      document.body.appendChild( element );
+      return( element );
+    };
+    var initTabControls = function() {
+      Array.from( document.querySelectorAll( "table.initTabControl" ) ).forEach(
+        function( table ) {
+          var i;
+          // init xTabControl
+          var parent = table.parentNode;
+          var control = makeElem( "div", { className: "xTabControl" } );
+          parent.replaceChild( control, table );
+          control.appendChild( table );
+          // init xTabContainer
+          var container = makeElem( "div", { className: "xTabContainer" } );
+          control.appendChild( container );
+          // init xTabWindow(s)
+          i = 0;
+          Array.from( control.querySelectorAll( "table.initTabControl tbody tr td" ) ).forEach(
+            function( td ) {
+              var win = makeElem( "div", { className: "xTabWindow" } );
+              win.setAttribute( "data-index", i );
+              if( i == 0 ) win.setAttribute( "data-active", true );
+              while( td.firstChild ) win.appendChild( td.firstChild );
+              container.appendChild( win );
+              i++;
+            }
+          );
+          // init xTabButton(s)
+          i = 0;
+          Array.from( control.querySelectorAll( "table.initTabControl thead tr th" ) ).forEach(
+            function( tab ) {
+              tab.className = "xTabButton";
+              tab.setAttribute( "data-index", i );
+              if( i == 0 ) tab.setAttribute( "data-active", true );
+              // handle xTabButton onClick {
+              tab.onclick = function() {
+                // change active xTabButton if necessary
+                Array.from( control.querySelectorAll( ".xTabButton" ) ).forEach(
+                  function( element ) {
+                    if( !element.hasAttribute( "data-active" ) && element.getAttribute( "data-index" ) == tab.getAttribute( "data-index" ) )
+                      element.setAttribute( "data-active", true );
+                    else if( element.hasAttribute( "data-active" ) && element.getAttribute( "data-index" ) != tab.getAttribute( "data-index" ) )
+                      element.removeAttribute( "data-active" );
+                    else return;
+                  }
+                );
+                // change active xTabWindow if necessary
+                Array.from( control.querySelectorAll( ".xTabWindow" ) ).forEach(
+                  function( element ) {
+                    if( !element.hasAttribute( "data-active" ) && element.getAttribute( "data-index" ) == tab.getAttribute( "data-index" ) )
+                      element.setAttribute( "data-active", true );
+                    else if( element.hasAttribute( "data-active" ) && element.getAttribute( "data-index" ) != tab.getAttribute( "data-index" ) )
+                      element.removeAttribute( "data-active" );
+                    else return;
+                  }
+                );
+              };
+              // }
+              i++;
+            }
+          );
+          // remove tbody
+          var tbody = control.querySelector( "table.initTabControl tbody" );
+          tbody.parentNode.removeChild( tbody );
+          // remove initTabControl from table.className
+          if( table.classList.contains( "initTabControl" ) ) table.classList.remove( "initTabControl" );
+          // move remaining table.className to control.className
+          if( table.classList.length > 0 ) control.className += " " + table.className;
+          // remove table.className property
+          if( table.hasAttribute( "class" ) ) table.removeAttribute( "class" );
+        }
+      );
+    };
+    var run = function() {
+      initTabControls();
+    };
+    </script>
+  </head>
+  <body onload="run();">
+  <table>
+    <thead>
+      <tr>
+        <th>Header 1</th>
+        <th>Header 2</th>
+        <th>Header 3</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Row 1 : Col 1</td>
+        <td>Row 1 : Col 2</td>
+        <td>Row 1 : Col 3</td>
+      </tr>
+      <tr>
+        <td>Row 2 : Col 1</td>
+        <td>Row 2 : Col 2</td>
+        <td>Row 2 : Col 3</td>
+      </tr>
+      <tr>
+        <td>Row 3 : Col 1</td>
+        <td>Row 3 : Col 2</td>
+        <td>Row 3 : Col 3</td>
+      </tr>
+      <tr>
+        <td>Row 4 : Col 1</td>
+        <td>Row 4 : Col 2</td>
+        <td>Row 4 : Col 3</td>
+      </tr>
+      <tr>
+        <td>Row 5 : Col 1</td>
+        <td>Row 5 : Col 2</td>
+        <td>Row 5 : Col 3</td>
+      </tr>
+    </tbody>
+  </table>
+  <br/>
+  <table class="initTabControl">
+    <thead>
+      <tr>
+        <th>Tab 1</th>
+        <th>Tab 2</th>
+        <th>Tab 3</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <h3>Test for Tab 1</h3>
+        </td>
+        <td>
+          <h3>Test for Tab 2 -------------------------</h3>
+        </td>
+        <td>
+          <h3>Test for Tab 3 --------------------------------------------------</h3>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </body>
+</html>
